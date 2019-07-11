@@ -30,25 +30,7 @@ structure and regions with high density values.
 
 
 
-
 ![](images/IlustrationManifoldNormals.svg) 
-
-
-
-### Installation
----------------
-
-You can import Fermat directly from the folder where you have the repository. For example
-
-```python
-import sys
-sys.path.append(path_to_FermatFolder)
-from fermat import Fermat
-```
-
-However, if you are working on Ubuntu (or any similar distribution) you can install the `Fermat package` running the following command in a terminal 
-
-`python3 setup.py build && sudo python3 setup.py install`
 
 
 ### Implementation
