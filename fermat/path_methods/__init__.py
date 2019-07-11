@@ -1,1 +1,2 @@
-name = "fermat"
+
+__all__ = ['DijkstraMethod', 'DistanceCalculatorMethod', 'LandmarksMethod']

@@ -41,17 +41,6 @@ class DistanceOnTree:
             res[node] = index
         return res
 
-    def get_rmq_posta(self, xs):
-        res = [xs[:]]
-        n = len(xs)
-        p = 1
-        while p < n:
-            res.append(
-                [min(res[-1][i], res[-1][i + p]) if i + p < n else res[-1][i] for i in range(n)]
-            )
-            p *= 2
-        return res
-
     def get_rmq(self, xs):
         r = np.array(xs)
         res = [r]
@@ -59,20 +48,24 @@ class DistanceOnTree:
         p = 1
 
         while p < n:
-            r = np.append(np.min([r[:n-p], r[p:n]], axis=0), r[n-p:])
+            r = np.append(np.min([r[:n - p], r[p:n]], axis=0), r[n - p:])
             res.append(r)
             p *= 2
 
         return res
 
-
     def get_lca_distance(self, a, b):
-        x, y = sorted([self.right[a], self.right[b]])
+        r = self.right
+        x = r[a]
+        y = r[b]
+        if x > y:
+            x, y = y, x
         d = (y - x).bit_length() - 1
-        return min(self.rmq[d][x], self.rmq[d][y - (1 << d) + 1])
+        level = self.rmq[d]
+        return min(level[x], level[y - (1 << d) + 1])
 
     def get_distance(self, a, b):
-        return 0 if a == b else self.distances[a] + self.distances[b] - 2 * self.get_lca_distance(a, b)
+        return a - b and self.distances[a] + self.distances[b] - 2 * self.get_lca_distance(a, b)
 
 
 class LandmarksMethod(DistanceCalculatorMethod):
@@ -92,7 +85,7 @@ class LandmarksMethod(DistanceCalculatorMethod):
         values = []
 
         for i in range(n):
-            smallest_values_and_columns = heapq.nsmallest(k+1, zip(distances[i].tolist()[0], list(range(n))))
+            smallest_values_and_columns = heapq.nsmallest(k + 1, zip(distances[i].tolist()[0], list(range(n))))
             vs, cs = zip(*smallest_values_and_columns)
 
             columns.append(cs)
@@ -126,13 +119,13 @@ class LandmarksMethod(DistanceCalculatorMethod):
             if i in landmarks:
                 values.extend(distances[i, j] for j in range(n))
                 columns.extend(range(n))
-                rows.extend([i]*n)
+                rows.extend([i] * n)
             else:
                 smallest_values_and_columns = heapq.nsmallest(k + 1, zip(distances[i].tolist()[0], list(range(n))))
                 vs, cs = zip(*smallest_values_and_columns)
                 values.extend(vs)
                 columns.extend(cs)
-                rows.extend([i]*len(vs))
+                rows.extend([i] * len(vs))
 
         return csr_matrix((values, (rows, columns)), shape=(n, n))
 
@@ -156,6 +149,8 @@ class LandmarksMethod(DistanceCalculatorMethod):
             landmark_tree = DistanceOnTree(landmarks[i], prev=prev[i], distances=distance[i])
             self.landmarks_trees.append(landmark_tree)
 
+        return self
+
     def up(self, a, b):
         return min(lt.get_distance(a, b) for lt in self.landmarks_trees)
 
@@ -175,15 +170,20 @@ class LandmarksMethod(DistanceCalculatorMethod):
         if self.fermat.estimator == 'no_lca':
             return self.no_lca(a, b)
 
+    def get_distance_calculator(self):
+        if self.fermat.estimator == 'up':
+            return self.up
+        if self.fermat.estimator == 'down':
+            return self.down
+        if self.fermat.estimator == 'mean':
+            return lambda a, b: (self.up(a, b) + self.down(a, b)) / 2
+        if self.fermat.estimator == 'no_lca':
+            return self.no_lca
+
     def get_distances(self):
-        res = np.matrix(np.zeros((self.n, self.n)))
+        res = np.zeros((self.n, self.n))
+        d = self.get_distance_calculator()
         for i in range(self.n):
             for j in range(i):
-                res[i, j] = res[j, i] = self.get_distance(i, j)
-        return res
-
-
-
-
-
-
+                res[i, j] = d(i, j)
+        return res + res.T

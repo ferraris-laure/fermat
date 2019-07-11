@@ -1,6 +1,6 @@
 import random
 
-from fermat.path_methods.Methods import Methods
+import numpy as np
 
 
 class Fermat:
@@ -67,6 +67,7 @@ class Fermat:
 
         """
         self.alpha = alpha
+
         self.k = k
         self.landmarks = landmarks
         self.estimator = estimator
@@ -76,14 +77,14 @@ class Fermat:
         self.seed = seed
         self.random = random.Random(self.seed)
 
-        self.path_method = Methods().byName(path_method, self)
+        self.path_method = Methods().by_name(path_method, self)
 
-    def fit(self, distances):
+    def fit(self, distances: np.ndarray):
         """
 
         Parameters
         -----------
-        distances: np.matrix
+        distances: np.ndarray
             Matrix with pairwise distances
 
 
@@ -125,3 +126,40 @@ class Fermat:
         """
 
         return self.path_method.get_distances()
+
+
+class DistanceCalculatorMethod:
+
+    def __init__(self, fermat: Fermat):
+        self.fermat = fermat
+
+    def fit(self, distances: np.ndarray):
+        raise NotImplementedError()
+
+    def get_distance(self, a: int, b: int):
+        raise NotImplementedError()
+
+    def get_distances(self):
+        raise NotImplementedError()
+
+
+class Methods:
+
+    from fermat.path_methods.DijkstraMethod import DijkstraMethod
+    from fermat.path_methods.FloydWarshallMethod import FloydWarshallMethod
+    from fermat.path_methods.LandmarksMethod import LandmarksMethod
+
+    methods = {
+        'L': LandmarksMethod,
+        'FW': FloydWarshallMethod,
+        'D': DijkstraMethod
+    }
+
+    @staticmethod
+    def by_name(name, fermat) -> DistanceCalculatorMethod:
+        if name in Methods.methods.keys():
+            return Methods.methods[name](fermat)
+        else:
+            raise Exception('Unknown method name: {}'.format(name))
+
+

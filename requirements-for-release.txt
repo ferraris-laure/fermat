@@ -1,5 +1,3 @@
 scipy
 numpy
 scikit-learn
-ipykernel
-matplotlib

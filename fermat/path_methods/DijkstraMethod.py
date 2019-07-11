@@ -15,6 +15,7 @@ class DijkstraMethod(DistanceCalculatorMethod):
             csgraph=adj_matrix.power(self.fermat.alpha),
             method='D'
         )
+        return self
 
     def create_adj_matrix(self, distances):
         

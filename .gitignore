@@ -4,6 +4,8 @@
 build/
 dist/
 venv/
+venv-*/
 *.egg-info/
-
+.eggs/
 .idea/
+**/.ipynb_checkpoints/
