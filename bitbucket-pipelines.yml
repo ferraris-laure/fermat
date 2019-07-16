@@ -8,9 +8,7 @@ pipelines:
           script:
             - pip install -r requirements.txt
             - python -m unittest discover tests/
-            - python3 setup.py clean --all sdist bdist_wheel
-          artifacts:
-            - dist/**
+            - python3 setup.py bdist_wheel
       - step:
           name: Publicación de versión en PyPI Test
           trigger: manual
@@ -21,6 +19,7 @@ pipelines:
                 PYPI_USERNAME: $PYPI_USERNAME
                 PYPI_PASSWORD: $PYPI_PASSWORD
                 REPOSITORY: $PYPI_REPO_URL
+                DISTRIBUTIONS: 'bdist_wheel'
       - step:
           name: Publicación de versión en PyPI
           trigger: manual
@@ -31,6 +30,7 @@ pipelines:
                 PYPI_USERNAME: $PYPI_USERNAME
                 PYPI_PASSWORD: $PYPI_PASSWORD
                 REPOSITORY: $PYPI_REPO_URL
+                DISTRIBUTIONS: 'bdist_wheel'
 
   pull-requests:
     '**':
@@ -42,6 +42,6 @@ pipelines:
           script:
             - pip install -r requirements.txt
             - python -m unittest discover tests/
-            - python3 setup.py clean --all sdist bdist_wheel
+            - python3 setup.py bdist_wheel
           artifacts:
             - dist/**
