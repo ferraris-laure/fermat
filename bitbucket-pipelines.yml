@@ -14,7 +14,7 @@ pipelines:
           trigger: manual
           deployment: test
           script:
-            - pipe: atlassian/pypi-publish:0.2.7
+            - pipe: atlassian/pypi-publish:0.2.9
               variables:
                 PYPI_USERNAME: $PYPI_USERNAME
                 PYPI_PASSWORD: $PYPI_PASSWORD
@@ -25,7 +25,7 @@ pipelines:
           trigger: manual
           deployment: production
           script:
-            - pipe: atlassian/pypi-publish:0.2.7
+            - pipe: atlassian/pypi-publish:0.2.9
               variables:
                 PYPI_USERNAME: $PYPI_USERNAME
                 PYPI_PASSWORD: $PYPI_PASSWORD
