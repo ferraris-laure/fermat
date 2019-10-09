@@ -5,6 +5,7 @@ build/
 dist/
 venv/
 venv-*/
+.venv/
 *.egg-info/
 .eggs/
 .idea/

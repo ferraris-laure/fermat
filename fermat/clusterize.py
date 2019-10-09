@@ -1,15 +1,16 @@
 import numpy as np
+from sklearn.base import ClusterMixin, BaseEstimator
 from sklearn.metrics import euclidean_distances
 
 from fermat import Fermat
 from fermat import kmedoids
 
 
-class FermatKMeans:
+class FermatKMeans(BaseEstimator, ClusterMixin):
 
     def __init__(self,
-                 cluster_qty,
-                 alpha, path_method='FW', k=None, landmarks=None, estimator=None, seed=None,
+                 cluster_qty=8,
+                 alpha=2, path_method='FW', k=None, landmarks=None, estimator=None, seed=None,
                  iterations=5, max_faults=5, log=False,
                  distance='euclidean'
                  ):
@@ -26,19 +27,46 @@ class FermatKMeans:
         :param log: Allows logging for the Kmeans Algorithm (kmedoids.logs)
         :param seed: Random seed.
         """
-        if distance not in ('euclidean', 'matrix'):
-            raise ValueError("Unknown value for distance parameter: {}".format(self.distance))
-        self.distance = distance
-        self.fermat = Fermat(alpha, path_method, k, landmarks, estimator, seed)
-        self.kmedoids = kmedoids.KMedoids(iterations, max_faults, log, seed)
         self.cluster_qty = cluster_qty
-        self.distance_matrix = None
+        self.alpha = alpha
+        self.path_method = path_method
+        self.k = k
+        self.landmarks = landmarks
+        self.estimator = estimator
+        self.seed = seed
+        self.iterations = iterations
+        self.max_faults = max_faults
+        self.log = log
+        self.distance = distance
+        self.distance_matrix_ = None
+        self.labels_ = None
 
-    def fit_predict(self, data):
+    def fit(self, X):
+        if self.distance not in ('euclidean', 'matrix'):
+            raise ValueError("Unknown value for distance parameter: {}".format(self.distance))
+
         if self.distance == 'euclidean':
-            data = euclidean_distances(data, data)
-        data /= np.mean(data)
-        self.fermat.fit(data)
-        self.distance_matrix = self.fermat.get_distances()
-        return self.kmedoids(self.distance_matrix, self.cluster_qty)
+            X = euclidean_distances(X, X)
+        X = X / np.mean(X)
 
+        fermat = Fermat(
+            alpha=self.alpha,
+            path_method=self.path_method,
+            k=self.k,
+            landmarks=self.landmarks,
+            estimator=self.estimator,
+            seed=self.seed
+        )
+
+        fermat.fit(X)
+
+        km = kmedoids.KMedoids(
+            iterations=self.iterations,
+            max_faults=self.max_faults,
+            log=self.log,
+            seed=self.seed
+        )
+
+        self.distance_matrix_ = fermat.get_distances()
+        self.labels_ = km(self.distance_matrix_, self.cluster_qty)
+        return self

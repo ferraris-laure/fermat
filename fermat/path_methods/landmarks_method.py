@@ -4,7 +4,7 @@ import numpy as np
 from scipy.sparse import csr_matrix, dok_matrix
 from scipy.sparse.csgraph import shortest_path
 
-from fermat.path_methods.DistanceCalculatorMethod import DistanceCalculatorMethod
+from fermat.path_methods.distance_calculator_method import DistanceCalculatorMethod
 
 
 class DistanceOnTree:
@@ -70,22 +70,24 @@ class DistanceOnTree:
 
 class LandmarksMethod(DistanceCalculatorMethod):
 
-    def __init__(self, fermat):
-        super().__init__(fermat)
-        self.landmarks_trees = []
+    def __init__(self, alpha, landmarks, k, estimator, seed, **kwargs):
+        super().__init__(alpha)
         self.n = None
-        assert fermat.k is not None
+        self.k = k
+        self.estimator = estimator
+        self.landmarks = landmarks
+        self.seed = seed
+        self.landmarks_trees_ = []
 
     def get_near_points(self, distances):
 
-        k = self.fermat.k
         n = distances.shape[0]
 
         columns = []
         values = []
 
         for i in range(n):
-            smallest_values_and_columns = heapq.nsmallest(k + 1, zip(distances[i].tolist()[0], list(range(n))))
+            smallest_values_and_columns = heapq.nsmallest(self.k + 1, zip(distances[i].tolist()[0], list(range(n))))
             vs, cs = zip(*smallest_values_and_columns)
 
             columns.append(cs)
@@ -108,7 +110,6 @@ class LandmarksMethod(DistanceCalculatorMethod):
 
     def create_adj_matrix_all(self, landmarks, distances):
 
-        k = self.fermat.k
         n = distances.shape[0]
 
         columns = []
@@ -121,7 +122,10 @@ class LandmarksMethod(DistanceCalculatorMethod):
                 columns.extend(range(n))
                 rows.extend([i] * n)
             else:
-                smallest_values_and_columns = heapq.nsmallest(k + 1, zip(distances[i].tolist()[0], list(range(n))))
+                smallest_values_and_columns = heapq.nsmallest(
+                    self.k + 1,
+                    zip(distances[i], list(range(n)))
+                )
                 vs, cs = zip(*smallest_values_and_columns)
                 values.extend(vs)
                 columns.extend(cs)
@@ -133,12 +137,12 @@ class LandmarksMethod(DistanceCalculatorMethod):
 
         self.n = distances.shape[0]
 
-        landmarks = self.fermat.random.sample(range(distances.shape[0]), self.fermat.landmarks)
+        landmarks = np.random.RandomState(seed=self.seed).choice(range(distances.shape[0]), self.landmarks)
 
         adj = self.create_adj_matrix_all(landmarks, distances)
 
         distance, prev = shortest_path(
-            csgraph=adj.power(self.fermat.alpha),
+            csgraph=adj.power(self.alpha),
             method='D',
             return_predecessors=True,
             directed=False,
@@ -147,37 +151,37 @@ class LandmarksMethod(DistanceCalculatorMethod):
 
         for i in range(len(landmarks)):
             landmark_tree = DistanceOnTree(landmarks[i], prev=prev[i], distances=distance[i])
-            self.landmarks_trees.append(landmark_tree)
+            self.landmarks_trees_.append(landmark_tree)
 
         return self
 
     def up(self, a, b):
-        return min(lt.get_distance(a, b) for lt in self.landmarks_trees)
+        return min(lt.get_distance(a, b) for lt in self.landmarks_trees_)
 
     def down(self, a, b):
-        return max(abs(lt.distances[a] - lt.distances[b]) for lt in self.landmarks_trees)
+        return max(abs(lt.distances[a] - lt.distances[b]) for lt in self.landmarks_trees_)
 
     def no_lca(self, a, b):
-        return min(lt.distances[a] + lt.distances[b] for lt in self.landmarks_trees)
+        return min(lt.distances[a] + lt.distances[b] for lt in self.landmarks_trees_)
 
     def get_distance(self, a, b):
-        if self.fermat.estimator == 'up':
+        if self.estimator == 'up':
             return self.up(a, b)
-        if self.fermat.estimator == 'down':
+        if self.estimator == 'down':
             return self.down(a, b)
-        if self.fermat.estimator == 'mean':
+        if self.estimator == 'mean':
             return (self.up(a, b) + self.down(a, b)) / 2
-        if self.fermat.estimator == 'no_lca':
+        if self.estimator == 'no_lca':
             return self.no_lca(a, b)
 
     def get_distance_calculator(self):
-        if self.fermat.estimator == 'up':
+        if self.estimator == 'up':
             return self.up
-        if self.fermat.estimator == 'down':
+        if self.estimator == 'down':
             return self.down
-        if self.fermat.estimator == 'mean':
+        if self.estimator == 'mean':
             return lambda a, b: (self.up(a, b) + self.down(a, b)) / 2
-        if self.fermat.estimator == 'no_lca':
+        if self.estimator == 'no_lca':
             return self.no_lca
 
     def get_distances(self):

@@ -13,8 +13,9 @@ def main():
         distance='euclidean',
         cluster_qty=10,
         alpha=4,
-        path_method='FW',
-        seed=42
+        # path_method='FW',
+        path_method='D', k=10,
+        seed=30
     )
 
     clusters = fkm.fit_predict(digits.data)
