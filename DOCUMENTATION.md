@@ -62,12 +62,3 @@ Parameters
     - Return
       - np.matrix, Fermat distance between all pairs of points
 
-
-### Example of use
-- Examples explaining how to use this package.
-    * [Quick start] 
-    * [MNIST data set]
-    
-
-[Quick start]:https://github.com/facusapienza21/Fermat-distance/tree/master/examples
-[MNIST data set]: https://github.com/facusapienza21/Fermat-distance/blob/master/examples/MNIST_example.ipynb

@@ -6,10 +6,11 @@ Fermat is a Python library that computes the Fermat distance estimator (also cal
 ### Table of contents
 
 1. [Introduction](#introduction)
-2. [Implementation](#implementation)
-3. [Features](#features)
-4. [Support](#support)
-5. [Citting Fermat distance](#licence)
+2. [Installation](#installation)
+3. [Implementation](#implementation)
+4. [Features](#features)
+5. [Support](#support)
+6. [Citting Fermat distance](#licence)
   
 
 ### Introduction
@@ -19,7 +20,7 @@ A density-based estimator for weighted geodesic distances is proposed.
 Let M be a D-dimensional manifold and consider a sample of N points X_n living in M. Let l(.,.) be a distance defined 
 in M (a typical choice could be Euclidean distance). For d>=1 and given two points p and q in M we define the Fermat 
 distance estimator as 
-![](images/estimator.png)
+![](https://bitbucket.org/aristas/fermat/raw/abff1252a68060bef495bf5cf9b6d45db7d8f497/images/estimator.png)
 
 The minimization is done over all K>=2 and all finite sequences of data points with x1= argmin l(x,p) 
 and xK = argmin l(x,q).
@@ -29,8 +30,12 @@ structure and regions with high density values.
 
 
 
-![](images/IlustrationManifoldNormals.svg) 
+![](https://bitbucket.org/aristas/fermat/raw/abff1252a68060bef495bf5cf9b6d45db7d8f497/images/IlustrationManifoldNormals.svg) 
 
+Installation
+------------
+
+    pip install fermat
 
 ### Implementation
 ---------------
@@ -59,6 +64,7 @@ and estimate `d(s,t)` as a function of `lower` and `upper` (for example, `d(s,t)
 - Examples explaining how to use this package.
     * [Quick start] 
     * [MNIST data set]
+    * [Clustering using Fermat]
 - [Documentation]
 
 ### Support
@@ -81,7 +87,8 @@ BibTeX entry:
           url={https://openreview.net/forum?id=BJfaMIJwG}
     }
 
-[Quick start]:https://github.com/facusapienza21/Fermat-distance/blob/master/examples/Fermat_quick_start.ipynb
+[Quick start]:https://bitbucket.org/aristas/fermat/src/master/examples/Fermat_quick_start.py
 [citing fermat in academic papers and theses]:https://scholar.google.com/citations?user=yWj-T4oAAAAJ&hl=en#d=gs_md_cita-d&p=&u=%2Fcitations%3Fview_op%3Dview_citation%26hl%3Den%26user%3DyWj-T4oAAAAJ%26citation_for_view%3DyWj-T4oAAAAJ%3Au5HHmVD_uO8C%26tzom%3D180
-[Documentation]:https://github.com/facusapienza21/Fermat-distance/blob/master/DOCUMENTATION.md
-[MNIST data set]: https://github.com/facusapienza21/Fermat-distance/blob/master/examples/MNIST_example.ipynb
+[Documentation]:https://bitbucket.org/aristas/fermat/src/master/DOCUMENTATION.md
+[MNIST data set]: https://bitbucket.org/aristas/fermat/src/master/examples/MNIST_example.py
+[Clustering using Fermat]: https://bitbucket.org/aristas/fermat/src/master/examples/Digits.py
