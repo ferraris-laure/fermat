@@ -8,9 +8,10 @@ Fermat is a Python library that computes the Fermat distance estimator (also cal
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Implementation](#implementation)
-4. [Features](#features)
-5. [Support](#support)
-6. [Citting Fermat distance](#licence)
+4. [Clustering](#clustering)
+5. [Features](#features)
+6. [Support](#support)
+7. [Fermat distance citation](#licence)
   
 
 ### Introduction
@@ -28,6 +29,7 @@ and xK = argmin l(x,q).
 When d=1, we recover the distance l(.,.) but if d>1, the Fermat distance tends to follow more closely the manifold 
 structure and regions with high density values.
 
+This distance is useful for clustering pourposes. Replacing Euclidean distance with Fermat distance in standard clustering alorithms leads to much better results.
 
 
 ![](https://bitbucket.org/aristas/fermat/raw/abff1252a68060bef495bf5cf9b6d45db7d8f497/images/IlustrationManifoldNormals.svg) 
@@ -56,6 +58,10 @@ If the number of points n is too high and neither Floyd-Warshall and Dijkstra ru
 
 and estimate `d(s,t)` as a function of `lower` and `upper` (for example, `d(s,t) ~ (_lower + upper_) / 2` ). The complexity is `O( l * ( k * n * log n ) )`.
 
+### Clustering
+
+The tool FermatKmeans implements the K-medoids algorithm with Fermat distance as an input. [Here] is an example explaining how to use it to compute clusters in MNIST dataset
+
 
 ### Features
 ---------------
@@ -71,24 +77,28 @@ and estimate `d(s,t)` as a function of `lower` and `upper` (for example, `d(s,t)
 ---------------
 
 If you have an open-ended or a research question:
--  `'f.sapienza@aristas.com.ar'`
+-  `'support@aristas.com.ar'`
 
-### Citting Fermat distance
+### Fermat distance citation
 ---------------
 
-When [citing fermat in academic papers and theses], please use this
-BibTeX entry:
+Fermat distance has been introduced and studied in the following papers
 
-    @inproceedings{
-          sapienza2018weighted,
+    @inproceedings{SGJ2018,
           title={Weighted Geodesic Distance Following Fermat's Principle},
           author={Facundo Sapienza and Pablo Groisman and Matthieu Jonckheere},
           year={2018},
           url={https://openreview.net/forum?id=BJfaMIJwG}
     }
 
+	@article{GJS2018,
+	  title={Nonhomogeneous Euclidean first-passage percolation and distance learning},
+	  author={Groisman, Pablo and Jonckheere, Matthieu and Sapienza, Facundo},
+	  journal={arXiv preprint arXiv:1810.09398},
+	  year={2018}
+    }	
+
 [Quick start]:https://bitbucket.org/aristas/fermat/src/master/examples/Fermat_quick_start.py
-[citing fermat in academic papers and theses]:https://scholar.google.com/citations?user=yWj-T4oAAAAJ&hl=en#d=gs_md_cita-d&p=&u=%2Fcitations%3Fview_op%3Dview_citation%26hl%3Den%26user%3DyWj-T4oAAAAJ%26citation_for_view%3DyWj-T4oAAAAJ%3Au5HHmVD_uO8C%26tzom%3D180
 [Documentation]:https://bitbucket.org/aristas/fermat/src/master/DOCUMENTATION.md
 [MNIST data set]: https://bitbucket.org/aristas/fermat/src/master/examples/MNIST_example.py
-[Clustering using Fermat]: https://bitbucket.org/aristas/fermat/src/master/examples/Digits.py
+[Here]: https://bitbucket.org/aristas/fermat/src/master/examples/Digits.py
