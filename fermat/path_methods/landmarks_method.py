@@ -79,35 +79,6 @@ class LandmarksMethod(DistanceCalculatorMethod):
         self.seed = seed
         self.landmarks_trees_ = []
 
-    def get_near_points(self, distances):
-
-        n = distances.shape[0]
-
-        columns = []
-        values = []
-
-        for i in range(n):
-            smallest_values_and_columns = heapq.nsmallest(self.k + 1, zip(distances[i].tolist()[0], list(range(n))))
-            vs, cs = zip(*smallest_values_and_columns)
-
-            columns.append(cs)
-            values.append(vs)
-
-        return columns, values
-
-    def create_adj_matrix(self, l, near_columns, near_values, distances):
-
-        n = distances.shape[0]
-        m = dok_matrix((n, n), dtype='d')
-
-        for row in range(n):
-            for column, value in zip(near_columns[row], near_values[row]):
-                m[row, column] = m[column, row] = value
-
-            m[row, l] = m[l, row] = distances[l, row]
-
-        return m
-
     def create_adj_matrix_all(self, landmarks, distances):
 
         n = distances.shape[0]
@@ -162,7 +133,10 @@ class LandmarksMethod(DistanceCalculatorMethod):
         return max(abs(lt.distances[a] - lt.distances[b]) for lt in self.landmarks_trees_)
 
     def no_lca(self, a, b):
-        return min(lt.distances[a] + lt.distances[b] for lt in self.landmarks_trees_)
+        if a == b:
+            return 0
+        else:
+            return min(lt.distances[a] + lt.distances[b] for lt in self.landmarks_trees_)
 
     def get_distance(self, a, b):
         if self.estimator == 'up':

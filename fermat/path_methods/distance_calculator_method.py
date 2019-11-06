@@ -6,10 +6,10 @@ class DistanceCalculatorMethod:
         self.alpha = alpha
 
     def fit(self, distances):
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def get_distance(self, a, b):
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def get_distances(self):
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover

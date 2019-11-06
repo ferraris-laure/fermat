@@ -10,3 +10,5 @@ venv-*/
 .eggs/
 .idea/
 **/.ipynb_checkpoints/
+htmlcov/
+.coverage

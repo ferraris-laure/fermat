@@ -43,6 +43,7 @@ class KMedoids:
         for _ in range(qty):
             res.append(self.rs.choice(points, p=p))
             p = data[res].min(axis=0)
+            p = p.clip(max=2 * p[p < np.inf].max())
             p /= p.sum()
 
         return np.array(res)
