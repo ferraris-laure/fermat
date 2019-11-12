@@ -1,7 +1,0 @@
-scipy
-numpy
-scikit-learn
-ipykernel
-matplotlib
-nose
-coverage
