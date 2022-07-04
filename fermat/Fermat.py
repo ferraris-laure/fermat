@@ -3,7 +3,7 @@ from typing import Dict
 
 import numpy as np
 from sklearn.base import BaseEstimator
-
+from scipy.special import gamma
 
 class Fermat(BaseEstimator):
 
@@ -77,16 +77,29 @@ class Fermat(BaseEstimator):
 
         self.method_ = None
 
-    def fit(self, distances: np.ndarray):
+    def fit(self, distances: np.ndarray, normalize=False, d=None):
         """
 
         Parameters
         -----------
         distances: np.ndarray
             Matrix with pairwise distances
+        
+        normalize: bool
+            Whether we normalize the distance to accound for large values of alpha and n. 
+            The normalization constant is such that for the one dimensional case, the Fermat distance between 0 and 1 for an uniform sampling in [0,1] is 
+            equal to 1 for every alpha. 
+            
+        d: integer
+            Dimension of the problem. Just requiered when normalize=True. 
 
         """
-        self.method_ = Methods().by_name(**self.get_params()).fit(distances)
+        if normalize:
+            n = distances.shape[0]
+            factor = ( n ** ((self.alpha-1) / d) / gamma(self.alpha+1) ) ** (1 / self.alpha)
+            self.method_ = Methods().by_name(**self.get_params()).fit(factor * distances)
+        else:
+            self.method_ = Methods().by_name(**self.get_params()).fit(distances)
         return self
 
     def get_distance(self, a, b):
