@@ -39,7 +39,8 @@ class DijkstraMethod(DistanceCalculatorMethod):
             columns.extend(cs)
             values.extend(vs)
         
-        return csr_matrix((values+values, (rows+columns, columns+rows)), shape=(n, n))
+        return csr_matrix((values, (rows, columns)), shape=(n, n))
+        #return csr_matrix((values+values, (rows+columns, columns+rows)), shape=(n, n))
 
     def get_distance(self, a, b):
         return self.distances_[a, b]
