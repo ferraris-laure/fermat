@@ -18,7 +18,8 @@ class KMedoids:
         self.rs = RandomState(seed)
 
     def _find_clusters(self, data: np.ndarray, centers_idx: np.ndarray) -> np.ndarray:
-        return centers_idx[data[centers_idx].argmin(axis=0)]
+        return centers_idx[data[centers_idx].argmin(axis=0)] #inside returns a vector of length the points with the indx of the cluster of each point.
+#returns the labels_pred of each point
 
     def _sum_distances_to_centers(self, data: np.ndarray, clusters: np.ndarray) -> float:
         return data[np.arange(len(data)), clusters].sum()
@@ -34,6 +35,7 @@ class KMedoids:
             group[data[np.ix_(group, group)].sum(axis=0).argmin()]
             for group in self._to_groups(clusters)
         ])
+    #pour chaque groupe on liste les distances de tous les points à un centroïd. retourne l'indice du centroïd du groupe qui minise la somme des distances dans le groupe.
 
     def _choose_initial_centers(self, data: np.ndarray, qty: int):
         points = np.arange(len(data))

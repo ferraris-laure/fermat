@@ -1,4 +1,4 @@
-from collections import Callable
+from collections.abc import Callable
 from typing import Dict
 
 import numpy as np
@@ -97,6 +97,7 @@ class Fermat(BaseEstimator):
         if normalize:
             n = distances.shape[0]
             factor = ( n ** ((self.alpha-1) / d) / gamma(self.alpha+1) ) ** (1 / self.alpha)
+            #factor =  n ** ((self.alpha-1) / d) 
             self.method_ = Methods().by_name(**self.get_params()).fit(factor * distances)
         else:
             self.method_ = Methods().by_name(**self.get_params()).fit(distances)
