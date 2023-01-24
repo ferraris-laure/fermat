@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections.abc import namedtuple
 from typing import List, Tuple
 
 import numpy as np
